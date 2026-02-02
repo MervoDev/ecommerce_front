@@ -26,7 +26,7 @@ export function ProductList({ categoryId, searchTerm }: ProductListProps) {
         setAllProducts(data || []);
       } catch (err) {
         console.error('Erreur lors du chargement des produits:', err);
-        setError('Impossible de charger les produits. Vérifiez que le backend est démarré sur localhost:3000');
+        setError('Impossible de charger les produits. Vérifiez que le backend est démarré et accessible');
         setAllProducts([]);
       } finally {
         setLoading(false);
@@ -82,7 +82,7 @@ export function ProductList({ categoryId, searchTerm }: ProductListProps) {
           <p><strong>Pour résoudre ce problème :</strong></p>
           <ol>
             <li>Vérifiez que votre backend NestJS est démarré</li>
-            <li>Assurez-vous qu'il fonctionne sur <code>http://localhost:3000</code></li>
+            <li>Assurez-vous qu'il est accessible depuis le frontend</li>
             <li>Vérifiez que CORS est activé dans le backend</li>
           </ol>
         </div>

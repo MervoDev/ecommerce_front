@@ -1,6 +1,7 @@
 import type { Category, Product } from '../types/Product';
+import { API_URL } from '../config/api';
 
-const API_BASE_URL = 'http://localhost:3000'; 
+const API_BASE_URL = API_URL || 'http://localhost:3000'; 
 
 class ApiService {
   private async request<T>(endpoint: string, options?: RequestInit): Promise<T> {

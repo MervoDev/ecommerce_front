@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import type { Cart, CartItem } from '../types/Product';
+import type { Cart } from '../types/Product';
 import { apiService } from '../services/api';
 
 // Hook pour gérer le panier côté serveur
@@ -20,7 +20,7 @@ export function useServerCart(userId?: number) {
       setLoading(true);
       setError(null);
       const userCart = await apiService.getUserCart(userId);
-      setCart(userCart);
+      setCart(userCart as Cart);
     } catch (err) {
       setError('Erreur lors du chargement du panier');
       console.error('Error fetching cart:', err);

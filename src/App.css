@@ -655,7 +655,7 @@ body {
 }
 
 .nav-logo .logo-image {
-  height: 60px;
+  height: 80px;
   width: auto;
   max-width: 150px;
   object-fit: contain;
@@ -907,7 +907,7 @@ body {
   }
 
   .nav-logo .logo-image {
-    height: 45px;
+    height: 50px;
   }
 
   .nav-logo h2 {

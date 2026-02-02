@@ -5,7 +5,10 @@ import { Footer } from './components/Footer';
 import { HomePage } from './pages/HomePage';
 import { AdminPage } from './pages/AdminPage';
 import { AdminLogin } from './pages/AdminLogin';
+import { API_URL } from './config/api';
 import './App.css'
+
+const API_BASE_URL = API_URL || 'http://localhost:3000';
 
 type PageType = 'home' | 'admin-login' | 'admin';
 
@@ -59,7 +62,7 @@ function App() {
     try {
       console.log('Tentative de connexion avec:', credentials.email); // Debug
       
-      const response = await fetch('http://localhost:3000/auth/login', {
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -107,16 +110,6 @@ function App() {
     setCurrentPage('home');
     localStorage.removeItem('adminUser');
     window.history.pushState({}, '', '/');
-  };
-
-  // Fonction pour naviguer vers /admin
-  const navigateToAdmin = () => {
-    window.history.pushState({}, '', '/admin');
-    if (isAdminAuthenticated) {
-      setCurrentPage('admin');
-    } else {
-      setCurrentPage('admin-login');
-    }
   };
 
   return (

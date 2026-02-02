@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react';
-import type { Product, Category } from '../types/Product';
+import type { Product } from '../types/Product';
 import { apiService } from '../services/api';
 import { ProductForm } from './ProductForm';
 import { ProductList as AdminProductList } from './ProductList';
 
 export function ProductManagement() {
   const [products, setProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -18,12 +17,8 @@ export function ProductManagement() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const [productsData, categoriesData] = await Promise.all([
-        apiService.getProducts(),
-        apiService.getCategories()
-      ]);
+      const productsData = await apiService.getProducts();
       setProducts(productsData);
-      setCategories(categoriesData);
     } catch (error) {
       console.error('Erreur lors du chargement:', error);
     } finally {
