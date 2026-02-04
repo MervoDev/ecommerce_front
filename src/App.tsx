@@ -29,15 +29,21 @@ function App() {
       }
     }
 
+    // Gérer la route initiale
     const path = window.location.pathname;
+    console.log('Route actuelle:', path);
+    
     if (path === '/admin') {
-      if (isAdminAuthenticated || (savedUser && JSON.parse(savedUser).role === 'admin')) {
+      if (savedUser && JSON.parse(savedUser).role === 'admin') {
         setCurrentPage('admin');
+        setIsAdminAuthenticated(true);
       } else {
         setCurrentPage('admin-login');
       }
+    } else {
+      setCurrentPage('home');
     }
-  }, [isAdminAuthenticated]);
+  }, []);
 
   // Écouter les changements d'URL
   useEffect(() => {
