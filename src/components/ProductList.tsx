@@ -6,9 +6,11 @@ import { apiService } from '../services/api';
 interface ProductListProps {
   categoryId?: string;
   searchTerm?: string;
+  onCartAdded?: () => void;
+  onAuthRequired?: (product: Product) => void;
 }
 
-export function ProductList({ categoryId, searchTerm }: ProductListProps) {
+export function ProductList({ categoryId, searchTerm, onCartAdded, onAuthRequired }: ProductListProps) {
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -139,6 +141,8 @@ export function ProductList({ categoryId, searchTerm }: ProductListProps) {
           <ProductCard 
             key={product.id} 
             product={product}
+            onCartAdded={onCartAdded}
+            onAuthRequired={onAuthRequired}
             onViewDetails={(product) => {
               console.log('View details for:', product.name);
             }}

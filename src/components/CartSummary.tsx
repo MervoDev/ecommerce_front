@@ -42,7 +42,7 @@ export function CartSummary() {
             
             <div className="cart-item-info">
               <h4 className="cart-item-name">{item.product.name}</h4>
-              <p className="cart-item-price">{item.product.price.toFixed(2)} € / unité</p>
+              <p className="cart-item-price">{item.product.price.toFixed(0)} FCFA / unité</p>
             </div>
             
             <div className="cart-item-controls">
@@ -63,7 +63,7 @@ export function CartSummary() {
               </div>
               
               <div className="item-total">
-                {(item.product.price * item.quantity).toFixed(2)} €
+                {(item.product.price * item.quantity).toFixed(0)} FCFA
               </div>
               
               <button 
@@ -81,7 +81,7 @@ export function CartSummary() {
       <div className="cart-footer">
         <div className="cart-summary-info">
           <span className="total-items">{state.items.length} article{state.items.length > 1 ? 's' : ''}</span>
-          <span className="total-price">Total: {state.total.toFixed(2)} €</span>
+          <span className="total-price">Total: {state.total.toFixed(0)} FCFA</span>
         </div>
         
         <div className="cart-actions">

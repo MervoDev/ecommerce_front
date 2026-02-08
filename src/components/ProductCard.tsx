@@ -1,10 +1,13 @@
 import type { Product } from '../types/Product';
-import { useCart } from '../context/CartContext';
+import { AddToCartButton } from './cart/AddToCartButton';
 import { useState } from 'react';
+import '../components/auth/auth.css';
 
 interface ProductCardProps {
   product: Product;
   onViewDetails?: (product: Product) => void;
+  onCartAdded?: () => void;
+  onAuthRequired?: (product: Product) => void;
 }
 
 // Fonction pour convertir categoryId en nom lisible
@@ -60,14 +63,9 @@ const getCategoryName = (categoryId?: string | number): string => {
   return categoryMap[categoryId.toString()] || categoryId.toString();
 };
 
-export function ProductCard({ product, onViewDetails }: ProductCardProps) {
-  const { dispatch } = useCart();
+export function ProductCard({ product, onViewDetails, onCartAdded, onAuthRequired }: ProductCardProps) {
   const [imageError, setImageError] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-
-  const handleAddToCart = () => {
-    dispatch({ type: 'ADD_ITEM', payload: product });
-  };
 
   const handleImageError = () => {
     setImageError(true);
@@ -104,9 +102,9 @@ export function ProductCard({ product, onViewDetails }: ProductCardProps) {
         <div className="product-badge">
           <span className="price-badge">
             {product.price && !isNaN(Number(product.price)) 
-              ? Number(product.price).toFixed(2) 
-              : '0.00'
-            } €
+              ? Number(product.price).toFixed(0) 
+              : '0'
+            } FCFA
           </span>
         </div>
       </div>
@@ -129,24 +127,13 @@ export function ProductCard({ product, onViewDetails }: ProductCardProps) {
           </div>
           
           <div className="product-actions">
-            {onViewDetails && (
-              <button 
-                onClick={() => onViewDetails(product)}
-                className="btn-details"
-                title="Voir les détails"
-              >
-                👁️
-              </button>
-            )}
-            
-            <button 
-              onClick={handleAddToCart}
-              disabled={product.stock === 0}
-              className="btn-add-cart"
-              title="Ajouter au panier"
-            >
-              {product.stock === 0 ? '❌' : '🛒'}
-            </button>
+            <AddToCartButton 
+              product={product} 
+              quantity={1}
+              className="btn-add-cart-auth"
+              onCartAdded={onCartAdded}
+              onAuthRequired={onAuthRequired}
+            />
           </div>
         </div>
       </div>

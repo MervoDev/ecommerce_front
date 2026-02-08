@@ -44,6 +44,15 @@ export function ProductForm({ product, onSubmit, onCancel }: ProductFormProps) {
       categoryId: formData.categoryId || undefined,
       isActive: formData.isActive
     };
+
+    console.log('=== DONNÉES PRODUIT ===');
+    console.log('Nom:', productData.name);
+    console.log('Prix:', productData.price);
+    console.log('Stock:', productData.stock);
+    console.log('CategoryId:', productData.categoryId);
+    console.log('Image présente:', !!productData.imageUrl);
+    console.log('Taille image (KB):', productData.imageUrl ? (productData.imageUrl.length / 1024).toFixed(2) : 0);
+    console.log('======================');
     
     onSubmit(productData);
   };
@@ -205,7 +214,7 @@ export function ProductForm({ product, onSubmit, onCancel }: ProductFormProps) {
 
         <div className="form-row">
           <div className="form-group">
-            <label htmlFor="price">Prix (€) *</label>
+            <label htmlFor="price">Prix (FCFA) *</label>
             <input
               type="number"
               id="price"

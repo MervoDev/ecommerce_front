@@ -5,9 +5,11 @@ import { CartSummary } from '../components/CartSummary';
 
 interface HomePageProps {
   globalSearchTerm?: string;
+  onCartAdded?: () => void;
+  onAuthRequired?: (product: any) => void;
 }
 
-export function HomePage({ globalSearchTerm }: HomePageProps) {
+export function HomePage({ globalSearchTerm, onCartAdded, onAuthRequired }: HomePageProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | undefined>();
 
@@ -70,6 +72,8 @@ export function HomePage({ globalSearchTerm }: HomePageProps) {
         <ProductList 
           searchTerm={effectiveSearchTerm || undefined}
           categoryId={selectedCategory}
+          onCartAdded={onCartAdded}
+          onAuthRequired={onAuthRequired}
         />
       </main>
       

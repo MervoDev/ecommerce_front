@@ -1,5 +1,6 @@
 import type { Category, Product } from '../types/Product';
 import { API_URL } from '../config/api';
+import { authService } from './authService';
 
 const API_BASE_URL = API_URL || 'http://localhost:3000'; 
 
@@ -10,13 +11,31 @@ class ApiService {
     const response = await fetch(url, {
       headers: {
         'Content-Type': 'application/json',
+        ...authService.getAuthHeaders(), // Ajouter automatiquement le token
         ...options?.headers,
       },
       ...options,
     });
 
     if (!response.ok) {
-      throw new Error(`API Error: ${response.status} ${response.statusText}`);
+      // Si erreur 401, l'utilisateur n'est pas authentifié
+      if (response.status === 401) {
+        authService.logout();
+        throw new Error('Vous devez vous connecter pour effectuer cette action');
+      }
+      
+      // Essayer de récupérer le message d'erreur du backend
+      let errorMessage = `API Error: ${response.status} ${response.statusText}`;
+      try {
+        const errorData = await response.json();
+        if (errorData.message) {
+          errorMessage = `Erreur: ${errorData.message}`;
+        }
+      } catch (e) {
+        // Si on ne peut pas parser le JSON, garder le message par défaut
+      }
+      
+      throw new Error(errorMessage);
     }
 
     // Pour les DELETE, ne pas essayer de parser JSON si la réponse est vide
@@ -51,33 +70,57 @@ class ApiService {
   }
 
   async createProduct(productData: Partial<Product>): Promise<Product> {
+    // Récupérer l'utilisateur connecté (admin)
+    const authUser = JSON.parse(localStorage.getItem('auth_user') || '{}');
     const adminUser = JSON.parse(localStorage.getItem('adminUser') || '{}');
+    const userEmail = authUser.email || adminUser.email;
+    
+    if (!userEmail) {
+      throw new Error('Vous devez être connecté en tant qu\'administrateur');
+    }
+    
     return this.request<Product>('/products', {
       method: 'POST',
       body: JSON.stringify({
         ...productData,
-        userEmail: adminUser.email
+        userEmail
       }),
     });
   }
 
   async updateProduct(id: number, productData: Partial<Product>): Promise<Product> {
+    // Récupérer l'utilisateur connecté (admin)
+    const authUser = JSON.parse(localStorage.getItem('auth_user') || '{}');
     const adminUser = JSON.parse(localStorage.getItem('adminUser') || '{}');
+    const userEmail = authUser.email || adminUser.email;
+    
+    if (!userEmail) {
+      throw new Error('Vous devez être connecté en tant qu\'administrateur');
+    }
+    
     return this.request<Product>(`/products/${id}`, {
       method: 'PUT',
       body: JSON.stringify({
         ...productData,
-        userEmail: adminUser.email
+        userEmail
       }),
     });
   }
 
   async deleteProduct(id: number): Promise<void> {
+    // Récupérer l'utilisateur connecté (admin)
+    const authUser = JSON.parse(localStorage.getItem('auth_user') || '{}');
     const adminUser = JSON.parse(localStorage.getItem('adminUser') || '{}');
+    const userEmail = authUser.email || adminUser.email;
+    
+    if (!userEmail) {
+      throw new Error('Vous devez être connecté en tant qu\'administrateur');
+    }
+    
     return this.request<void>(`/products/${id}`, {
       method: 'DELETE',
       body: JSON.stringify({
-        userEmail: adminUser.email
+        userEmail
       }),
     });
   }
@@ -125,8 +168,13 @@ class ApiService {
     });
   }
 
-  // Cart Items API
+  // Cart Items API - PROTÉGÉS PAR AUTHENTIFICATION
   async addCartItem(cartId: number, productId: number, quantity: number, unitPrice: number) {
+    // Vérifier l'authentification avant d'ajouter au panier
+    if (!authService.isAuthenticated()) {
+      throw new Error('AUTHENTICATION_REQUIRED');
+    }
+
     return this.request('/cart-items', {
       method: 'POST',
       body: JSON.stringify({ cartId, productId, quantity, unitPrice }),
@@ -134,10 +182,18 @@ class ApiService {
   }
 
   async getCartItems(cartId: number) {
+    if (!authService.isAuthenticated()) {
+      throw new Error('AUTHENTICATION_REQUIRED');
+    }
+
     return this.request(`/cart-items/cart/${cartId}`);
   }
 
   async updateCartItemQuantity(id: number, quantity: number) {
+    if (!authService.isAuthenticated()) {
+      throw new Error('AUTHENTICATION_REQUIRED');
+    }
+
     return this.request(`/cart-items/${id}`, {
       method: 'PUT',
       body: JSON.stringify({ quantity }),
@@ -145,6 +201,10 @@ class ApiService {
   }
 
   async removeCartItem(id: number) {
+    if (!authService.isAuthenticated()) {
+      throw new Error('AUTHENTICATION_REQUIRED');
+    }
+
     return this.request(`/cart-items/${id}`, {
       method: 'DELETE',
     });

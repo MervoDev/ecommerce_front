@@ -63,9 +63,9 @@ export function ProductList({ products, onEdit, onDelete }: ProductListProps) {
                 <td>
                   <span className="price-cell">
                     {product.price && !isNaN(Number(product.price)) 
-                      ? Number(product.price).toFixed(2) 
-                      : '0.00'
-                    } €
+                      ? Number(product.price).toFixed(0) 
+                      : '0'
+                    } FCFA
                   </span>
                 </td>
                 <td>
